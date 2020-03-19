@@ -65,10 +65,6 @@ public class FileUtil {
         return resultList;
     }
 
-    public static void main(String[] args) {
-        String src = "fa.c";
-        System.out.println(src.matches(".*.c"));
-    }
 
     /**
      * 返回指定目录及其子目录下的所有文件
@@ -76,10 +72,13 @@ public class FileUtil {
      * @param file
      * @return
      */
-    public static List<File> listFiles(File file) {
+    public static List<File> listFiles(File file) throws Exception {
         List<File> fileList = new LinkedList<>();
         if (file.isDirectory()) {
             File[] files = file.listFiles();
+            if(null==files){
+                throw new Exception("该目录下没有任何文件");
+            }
             for (File child : files) {
                 if (child.isDirectory()) {
                     fileList.addAll(listFiles(child));
