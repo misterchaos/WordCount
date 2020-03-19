@@ -5,12 +5,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import sample.constant.Constant;
+import sample.controller.Controller;
 
 public class Main extends Application {
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
+    public void start(Stage primaryStage) throws Exception {
+        Parent root = FXMLLoader.load(getClass().getResource("./view/sample.fxml"));
         primaryStage.setTitle("Hello World");
         primaryStage.setScene(new Scene(root, 300, 275));
         primaryStage.show();
@@ -18,6 +20,12 @@ public class Main extends Application {
 
 
     public static void main(String[] args) {
-        launch(args);
+        if (Constant.OPS_X.equalsIgnoreCase(args[0])) {
+            //启动图形界面
+            launch(args);
+        } else {
+            //命令行界面
+            Controller.wc(args);
+        }
     }
 }
