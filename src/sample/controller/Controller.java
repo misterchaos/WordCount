@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -19,6 +20,7 @@ import sample.utils.FileUtil;
 import sample.utils.RegexUtil;
 
 import java.io.File;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Controller {
@@ -27,7 +29,8 @@ public class Controller {
 
     @FXML
     private TableView resultTable;
-
+    @FXML
+    private TextField command;
     @FXML
     private TableColumn file;
     @FXML
@@ -60,12 +63,60 @@ public class Controller {
             //把表格的列和TableData的属性进行绑定
             bindProperty();
             //向表格中填充结果
-            ObservableList<TableItem> tableDataList = FXCollections.observableArrayList(
-                    BeanUtil.toTableItem(countService.countAll(file), file, begin));
-            resultTable.setItems(tableDataList);
+            TableItem tableItem = BeanUtil.toTableItem(countService.countAll(file), file, begin);
+            ObservableList<TableItem> items = FXCollections.observableArrayList(tableItem);
+            resultTable.setItems(items);
         } catch (Exception e) {
             alert(e.getMessage());
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * 点击页面按钮“执行指令”时运行
+     */
+    @FXML
+    private void run() {
+        try {
+            bindProperty();
+
+            //处理参数
+            String text = command.getText();
+            if (null == text || text.trim().isEmpty()) {
+                throw new Exception("请先输入正确的指令!");
+            }
+            String[] args;
+            try {
+                args = text.split(" ");
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new Exception("输入的参数个数不符合规则!");
+            }
+
+            //运行统计功能
+            long begin = System.currentTimeMillis();
+            ObservableList<TableItem> items = null;
+            //多文件处理
+            if (Constant.OPS_S.equals(args[0].trim())) {
+                if (args.length == 2) {
+                    List<File> files = FileUtil.listFileByRegex(RegexUtil.toRegex(args[1].trim()));
+                    List<TableItem> tableItemList = new LinkedList<>();
+                    for (File f : files) {
+                        tableItemList.add(BeanUtil.toTableItem(countService.countAll(f), f, begin));
+                    }
+                    items = FXCollections.observableList(tableItemList);
+                } else {
+                    throw new Exception("缺少必要的参数，指令示例：-s *.c");
+                }
+            } else {
+                //单文件处理
+                File file = new File(args[0].trim());
+                items = FXCollections.observableArrayList(BeanUtil.toTableItem(countService.countAll(file), file, begin));
+            }
+            resultTable.setItems(items);
+        } catch (Exception e) {
+            e.printStackTrace();
+            alert("提示：" + e.getMessage());
         }
     }
 
