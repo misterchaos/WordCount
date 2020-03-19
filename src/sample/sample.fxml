@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Text?>
+
+<Pane layoutX="1.0" layoutY="6.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="935.0" prefWidth="1600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.Controller">
+    <children>
+        <Button layoutX="34.0" layoutY="102.0" mnemonicParsing="false" onAction="#selectFile" text="选择文件" />
+
+        <TableView fx:id="resultTable" layoutX="34.0" layoutY="142.0" prefHeight="667.0" prefWidth="1400.0">
+            <columns>
+                <TableColumn fx:id="file" prefWidth="466.0" text="文件" />
+                <TableColumn fx:id="length" prefWidth="72.0" text="大小" />
+                <TableColumn fx:id="character" minWidth="0.0" prefWidth="134.0" text="字符数" />
+                <TableColumn fx:id="word" minWidth="3.0" prefWidth="131.0" text="单词数" />
+                <TableColumn fx:id="line" prefWidth="126.0" text="总行数" />
+                <TableColumn fx:id="emptyLine" prefWidth="120.0" text="空行数" />
+                <TableColumn fx:id="codeLine" prefWidth="128.0" text="代码行数" />
+                <TableColumn fx:id="annotationLine" prefWidth="115.0" text="注释行数" />
+                <TableColumn fx:id="time" prefWidth="107.0" text="统计耗时" />
+            </columns>
+        </TableView>
+      <TextField fx:id="command" layoutX="127.0" layoutY="102.0" promptText="在这里输入指令" />
+      <Button layoutX="340.0" layoutY="102.0" mnemonicParsing="false" onAction="#run" text="执行指令" />
+      <Text fill="#2c2a2a" layoutX="37.0" layoutY="841.0" strokeType="OUTSIDE" strokeWidth="0.0" text="提示：图形化界面上的指令省去了-c,-w,-l等指令，默认执行-a指令，比如hello.txt等价于命令行界面的-a hello.txt指令，-s *.c 指令等价于命令行界面的-s -a *.c指令" />
+      <Text layoutX="37.0" layoutY="57.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Word Count程序 Copyright @2020 黄钰朝">
+         <font>
+            <Font size="42.0" />
+         </font>
+      </Text>
+    </children>
+</Pane>
