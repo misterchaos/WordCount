@@ -1,6 +1,7 @@
 package sample.controller;
 
 import sample.constant.Constant;
+import sample.model.CountResult;
 import sample.service.CountService;
 import sample.service.impl.CountServiceImpl;
 
@@ -27,19 +28,22 @@ public class Controller {
                     int count;
                     switch (args[0]) {
                         case Constant.OPS_C:
-                            count = countService.countCharacter(file);
-                            System.out.println("字符数：" + count);
+                            System.out.println("字符数：" + countService.countCharacter(file));
                             break;
                         case Constant.OPS_W:
-                            count = countService.countWord(file);
-                            System.out.println("单词数：" + count);
+                            System.out.println("单词数：" + countService.countWord(file));
                             break;
                         case Constant.OPS_L:
-                            count = countService.countLine(file);
-                            System.out.println("行数：" + count);
+                            System.out.println("行数：" + countService.countLine(file));
                             break;
                         case Constant.OPS_A:
-
+                            CountResult result = countService.countAll(file);
+                            System.out.println("字符数：" + result.character);
+                            System.out.println("单词数：" + result.word);
+                            System.out.println("行数：" + result.line);
+                            System.out.println("空行数：" + result.emptyLine);
+                            System.out.println("代码行数：" + result.codeLine);
+                            System.out.println("注释行数：" + result.annotationLine);
                             break;
                         default:
                             break;
