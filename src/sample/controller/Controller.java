@@ -94,7 +94,6 @@ public class Controller {
             }
 
             //运行统计功能
-            long begin = System.currentTimeMillis();
             ObservableList<TableItem> items = null;
             //多文件处理
             if (Constant.OPS_S.equals(args[0].trim())) {
@@ -102,6 +101,7 @@ public class Controller {
                     List<File> files = FileUtil.listFileByRegex(RegexUtil.toRegex(args[1].trim()));
                     List<TableItem> tableItemList = new LinkedList<>();
                     for (File f : files) {
+                        long begin = System.currentTimeMillis();
                         tableItemList.add(BeanUtil.toTableItem(countService.countAll(f), f, begin));
                     }
                     items = FXCollections.observableList(tableItemList);
@@ -111,6 +111,7 @@ public class Controller {
             } else {
                 //单文件处理
                 File file = new File(args[0].trim());
+                long begin = System.currentTimeMillis();
                 items = FXCollections.observableArrayList(BeanUtil.toTableItem(countService.countAll(file), file, begin));
             }
             resultTable.setItems(items);
