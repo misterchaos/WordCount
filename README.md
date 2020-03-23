@@ -70,120 +70,126 @@
 ## 五、代码说明
 
 ```
-  1 /**
-  2      * 核心统计方法
-  3      *
-  4      * @param reader
-  5      * @return
-  6      * @throws IOException
-  7      */
-  8     private static CountResult count(BufferedReader reader) throws IOException {
-  9         CountResult result = new CountResult();
- 10         String character = "\\w";
- 11         String word = "[a-zA-Z]+";
- 12         String line;
- 13         //多行注释
- 14         boolean isAnnotation = false;
- 15         while ((line = reader.readLine()) != null) {
- 16             //统计一行中的字符数
- 17             result.character += CountUtil.count(line, character);
- 18             //统计一行中的单词数
- 19             result.word += CountUtil.count(line, word);
- 20             //统计行数
- 21             result.line++;
- 22             //统计空行,代码行,注释行
- 23             if (line.trim().isEmpty()) {
- 24                 //空行
- 25                 result.emptyLine++;
- 26                 //开始多行注释
- 27             } else if (isAnnotation) {
- 28                 result.annotationLine++;
- 29                 //多行注释结束
- 30                 if (line.trim().endsWith("*/")) {
- 31                     isAnnotation = false;
- 32                 }
- 33             } else if (line.trim().contains("//") || line.trim().contains("*")) {
- 34                 //注释行
- 35                 result.annotationLine++;
- 36                 //如果是行后注释
- 37                 if (!(line.trim().startsWith("/") || line.trim().startsWith("*"))) {
- 38                     result.codeLine++;
- 39                 }
- 40                 //多行注释开始
- 41                 if (line.trim().startsWith("/*")) {
- 42                     isAnnotation = true;
- 43                 }
- 44             } else {
- 45                 //代码行
- 46                 result.codeLine++;
- 47             }
- 48         }
- 49         return result;
- 50     }
- 51 
- 52 
- 53     /**
- 54      * 根据命令行模式下的参数执行
- 55      *
- 56      * @param args
- 57      */
- 58     public static void wc(String[] args) {
- 59         long begin = System.currentTimeMillis();
- 60         try {
- 61             //多文件处理
- 62             if (Constant.OPS_S.equals(args[0])) {
- 63                 if (args.length == 3) {
- 64                     List<File> files = FileUtil.listFileByRegex(RegexUtil.toRegex(args[2]));
- 65                     for (File f : files) {
- 66                         countFile(args[1], f);
- 67                     }
- 68                 } else {
- 69                     throw new Exception("缺少必要的参数，指令示例：-s -a *.c");
- 70                 }
- 71             } else {
- 72                 //单文件处理
- 73                 countFile(args[0], new File(args[1]));
- 74             }
- 75             System.out.println("运行耗时：" + (System.currentTimeMillis() - begin) + "ms");
- 76         } catch (Exception e) {
- 77             System.out.println("运行出错：" + e.getMessage());
- 78         }
- 79 
- 80     }
- 81 
- 82 
- 83     /**
- 84      * 统计输出一个文件的信息
- 85      *
- 86      * @param ops  要统计的信息
- 87      * @param file 文件名
- 88      * @throws Exception
- 89      */
- 90     public static void countFile(String ops, File file) throws Exception {
- 91         System.out.println("文件信息：" + BeanUtil.getFileInfo(file));
- 92         switch (ops) {
- 93             case Constant.OPS_C:
- 94                 System.out.println("字符数：" + countService.countCharacter(file));
- 95                 break;
- 96             case Constant.OPS_W:
- 97                 System.out.println("单词数：" + countService.countWord(file));
- 98                 break;
- 99             case Constant.OPS_L:
-100                 System.out.println("行数：" + countService.countLine(file));
-101                 break;
-102             case Constant.OPS_A:
-103                 CountResult result = countService.countAll(file);
-104                 System.out.println("字符数：" + result.character);
-105                 System.out.println("单词数：" + result.word);
-106                 System.out.println("行数：" + result.line);
-107                 System.out.println("空行数：" + result.emptyLine);
-108                 System.out.println("代码行数：" + result.codeLine);
-109                 System.out.println("注释行数：" + result.annotationLine);
-110                 break;
-111             default:
-112                 throw new Exception("无法识别的指令类型：" + ops);
-113         }
-114     }
+ /**
+     * 核心统计方法
+     *
+     * @param reader
+     * @return
+     * @throws IOException
+     */
+    private static CountResult count(BufferedReader reader) throws IOException {
+        CountResult result = new CountResult();
+        String character = "\\w";
+        String word = "[a-zA-Z]+";
+        String line;
+        //多行注释
+        boolean isAnnotation = false;
+        while ((line = reader.readLine()) != null) {
+            //统计一行中的字符数
+            result.character += CountUtil.count(line, character);
+            //统计一行中的单词数
+            result.word += CountUtil.count(line, word);
+            //统计行数
+            result.line++;
+            //统计空行,代码行,注释行
+            if (line.trim().isEmpty()) {
+                //空行
+                result.emptyLine++;
+                //开始多行注释
+            } else if (isAnnotation) {
+                result.annotationLine++;
+                //多行注释结束
+                if (line.trim().endsWith("*/")) {
+                    isAnnotation = false;
+                }
+            } else if (line.trim().contains("//") || line.trim().contains("*")) {
+                //注释行
+                result.annotationLine++;
+                //如果是行后注释
+                if (!(line.trim().startsWith("/") || line.trim().startsWith("*"))) {
+                    result.codeLine++;
+                }
+                //多行注释开始
+                if (line.trim().startsWith("/*")) {
+                    isAnnotation = true;
+                }
+            } else {
+                //代码行
+                result.codeLine++;
+            }
+        }
+        return result;
+    }
+
+
+    /**
+     * 根据命令行模式下的参数执行
+     *
+     * @param args
+     */
+    public static void wc(String[] args) {
+        long begin = System.currentTimeMillis();
+        try {
+            //多文件处理
+            if (Constant.OPS_S.equals(args[0])) {
+                if (args.length == 3) {
+                    List<File> files = FileUtil.listFileByRegex(RegexUtil.toRegex(args[2]));
+                    for (File f : files) {
+                        countFile(args[1], f);
+                    }
+                } else {
+                    throw new Exception("缺少必要的参数，指令示例：-s -a *.c");
+                }
+            } else {
+                //单文件处理
+                countFile(args[0], new File(args[1]));
+            }
+            System.out.println("运行耗时：" + (System.currentTimeMillis() - begin) + "ms");
+        } catch (Exception e) {
+            System.out.println("运行出错：" + e.getMessage());
+        }
+
+    }
+
+
+    /**
+     * 统计输出一个文件的信息
+     *
+     * @param ops  要统计的信息
+     * @param file 文件名
+     * @throws Exception
+     */
+    public static void countFile(String ops, File file) throws Exception {
+        System.out.println("文件信息：" + BeanUtil.getFileInfo(file));
+        switch (ops) {
+            case Constant.OPS_C:
+                System.out.println("字符数：" + countService.countCharacter(file));
+                break;
+            case Constant.OPS_W:
+                System.out.println("单词数：" + countService.countWord(file));
+                break;
+            case Constant.OPS_L:
+                System.out.println("行数：" + countService.countLine(file));
+                break;
+            case Constant.OPS_A:
+                CountResult result = countService.countAll(file);
+                System.out.println("字符数：" + result.character);
+                System.out.println("单词数：" + result.word);
+                System.out.println("行数：" + result.line);
+                System.out.println("空行数：" + result.emptyLine);
+                System.out.println("代码行数：" + result.codeLine);
+                System.out.println("注释行数：" + result.annotationLine);
+                break;
+            default:
+                throw new Exception("无法识别的指令类型：" + ops);
+        }
+    }
+```
+
+
+
+```
+
 ```
 
 ## 六、测试结果
@@ -217,6 +223,20 @@
 统计结果：
 
 ![img](https://img2020.cnblogs.com/blog/1654007/202003/1654007-20200323225902609-1003098674.png)
+
+#### 6.4 出错处理测试
+
+文件不存在：
+
+![img](https://img2020.cnblogs.com/blog/1654007/202003/1654007-20200323232950288-1021236415.png)
+
+缺少参数：
+
+![img](https://img2020.cnblogs.com/blog/1654007/202003/1654007-20200323233004960-1414023896.png)
+
+不识别的指令：![img](https://img2020.cnblogs.com/blog/1654007/202003/1654007-20200323233024727-1012235230.png)
+
+没有找到符合条件的文件：![img](https://img2020.cnblogs.com/blog/1654007/202003/1654007-20200323233033722-1403462493.png)
 
 ## 七、PSP表格
 
