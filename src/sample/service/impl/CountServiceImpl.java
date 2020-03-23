@@ -115,6 +115,8 @@ public class CountServiceImpl implements CountService {
         String character = "\\w";
         String word = "[a-zA-Z]+";
         String line;
+        //多行注释
+        boolean isAnnotation = false;
         while ((line = reader.readLine()) != null) {
             //统计一行中的字符数
             result.character += CountUtil.count(line, character);
@@ -126,9 +128,24 @@ public class CountServiceImpl implements CountService {
             if (line.trim().isEmpty()) {
                 //空行
                 result.emptyLine++;
-            } else if (line.trim().startsWith("/")||line.trim().startsWith("*")) {
+                //开始多行注释
+            } else if (isAnnotation) {
+                result.annotationLine++;
+                //多行注释结束
+                if (line.trim().endsWith("*/")) {
+                    isAnnotation = false;
+                }
+            } else if (line.trim().contains("//") || line.trim().contains("*")) {
                 //注释行
                 result.annotationLine++;
+                //如果是行后注释
+                if (!(line.trim().startsWith("/") || line.trim().startsWith("*"))) {
+                    result.codeLine++;
+                }
+                //多行注释开始
+                if (line.trim().startsWith("/*")) {
+                    isAnnotation = true;
+                }
             } else {
                 //代码行
                 result.codeLine++;
